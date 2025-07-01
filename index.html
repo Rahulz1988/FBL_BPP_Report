@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competency Assessment Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Competency Assessment Calculator</h1>
+            <p>Upload Excel file to calculate Sales%, Ops% and Suitability</p>
+        </div>
+        
+        <div class="content">
+            <div class="upload-section">
+                <div class="upload-icon">📁</div>
+                <h3>Upload Excel File</h3>
+                <p>Select your Excel file with candidate competency scores</p>
+                <input type="file" id="fileInput" accept=".xlsx,.xls" />
+                <button id="uploadBtn" class="btn-primary">Choose File</button>
+            </div>
+            
+            <div class="weightage-section">
+                <h3>Competency Weightages</h3>
+                <div class="weightage-grid">
+                    <div class="weightage-item">
+                        <h4>Sales Weightages</h4>
+                        <ul id="salesWeightages"></ul>
+                    </div>
+                    <div class="weightage-item">
+                        <h4>Operations Weightages</h4>
+                        <ul id="opsWeightages"></ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h3>Processing Results</h3>
+                <div class="status" id="status">Ready to process...</div>
+                <button id="downloadBtn" class="btn-success" style="display: none;">Download Processed Excel</button>
+            </div>
+            
+            <div class="preview-section" id="previewSection" style="display: none;">
+                <h3>Data Preview</h3>
+                <div class="table-container">
+                    <table id="previewTable">
+                        <thead id="tableHead"></thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
