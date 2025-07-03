@@ -15,14 +15,54 @@
         </div>
         
         <div class="content">
-            <div class="upload-section">
-                <div class="upload-icon">📁</div>
-                <h3>Upload Excel File</h3>
-                <p>Select your Excel file with candidate competency scores</p>
-                <input type="file" id="fileInput" accept=".xlsx,.xls" />
-                <button id="uploadBtn" class="btn-primary">Choose File</button>
+            <!-- Two Column Layout for Assessment Types -->
+            <div class="assessment-columns">
+                <!-- Left Column: Final Score Assessment -->
+                <div class="assessment-column">
+                    <div class="column-header">
+                        <h2>Competency Assessment using Final Score</h2>
+                        <p>Upload Excel file with final competency scores (5-20 scale)</p>
+                    </div>
+                    
+                    <div class="upload-section">
+                        <div class="upload-icon">📊</div>
+                        <h3>Upload Excel File (Final Score)</h3>
+                        <p>Select your Excel file with candidate final competency scores</p>
+                        <input type="file" id="fileInputFinal" accept=".xlsx,.xls" />
+                        <button id="uploadBtnFinal" class="btn-primary">Choose File</button>
+                    </div>
+                    
+                    <div class="results-section" id="resultsSectionFinal" style="display: none;">
+                        <h3>Processing Results (Final Score)</h3>
+                        <div class="status" id="statusFinal">Ready to process...</div>
+                        <button id="downloadBtnFinal" class="btn-success" style="display: none;">Download Processed Excel</button>
+                    </div>
+                </div>
+                
+                <!-- Right Column: Raw Score Assessment -->
+                <div class="assessment-column">
+                    <div class="column-header">
+                        <h2>Competency Assessment using Raw Score</h2>
+                        <p>Upload Excel file with raw competency scores for conversion</p>
+                    </div>
+                    
+                    <div class="upload-section">
+                        <div class="upload-icon">📋</div>
+                        <h3>Upload Excel File (Raw Score)</h3>
+                        <p>Select your Excel file with candidate raw competency scores</p>
+                        <input type="file" id="fileInputRaw" accept=".xlsx,.xls" />
+                        <button id="uploadBtnRaw" class="btn-primary">Choose File</button>
+                    </div>
+                    
+                    <div class="results-section" id="resultsSectionRaw" style="display: none;">
+                        <h3>Processing Results (Raw Score)</h3>
+                        <div class="status" id="statusRaw">Ready to process...</div>
+                        <button id="downloadBtnRaw" class="btn-success" style="display: none;">Download Processed Excel</button>
+                    </div>
+                </div>
             </div>
             
+            <!-- Competency Weightages Section -->
             <div class="weightage-section">
                 <h3>Competency Weightages</h3>
                 <div class="weightage-grid">
@@ -37,12 +77,7 @@
                 </div>
             </div>
             
-            <div class="results-section" id="resultsSection" style="display: none;">
-                <h3>Processing Results</h3>
-                <div class="status" id="status">Ready to process...</div>
-                <button id="downloadBtn" class="btn-success" style="display: none;">Download Processed Excel</button>
-            </div>
-            
+            <!-- Preview Section -->
             <div class="preview-section" id="previewSection" style="display: none;">
                 <h3>Data Preview</h3>
                 <div class="table-container">
@@ -55,6 +90,8 @@
         </div>
     </div>
     
+    <!-- Include both scripts -->
     <script src="script.js"></script>
+    <script src="rawscorescript.js"></script>
 </body>
 </html>

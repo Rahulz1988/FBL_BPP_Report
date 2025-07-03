@@ -15,7 +15,8 @@ const competencies = [
 const salesWeightages = [5.5, 5.5, 13.0, 5.5, 13.0, 5.5, 13.0, 13.0, 13.0, 13.0];
 const opsWeightages = [5.0, 15.0, 5.0, 15.0, 15.0, 15.0, 5.0, 5.0, 15.0, 5.0];
 
-let processedData = null;
+let processedDataFinal = null;
+// Removed duplicate processedDataRaw declaration - it's handled in rawscorescript.js
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function () {
@@ -39,20 +40,35 @@ function initializeWeightageDisplay() {
 }
 
 function initializeEventListeners() {
-    const fileInput = document.getElementById('fileInput');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
+    // Final Score Elements
+    const fileInputFinal = document.getElementById('fileInputFinal');
+    const uploadBtnFinal = document.getElementById('uploadBtnFinal');
+    const downloadBtnFinal = document.getElementById('downloadBtnFinal');
 
-    uploadBtn.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', handleFileUpload);
-    downloadBtn.addEventListener('click', downloadProcessedFile);
+    // Final Score Event Listeners
+    if (uploadBtnFinal) {
+        uploadBtnFinal.addEventListener('click', () => fileInputFinal.click());
+    }
+    if (fileInputFinal) {
+        fileInputFinal.addEventListener('change', (e) => handleFileUpload(e, 'final'));
+    }
+    if (downloadBtnFinal) {
+        downloadBtnFinal.addEventListener('click', () => downloadProcessedFile('final'));
+    }
+
+    // Raw Score Event Listeners are handled in rawscorescript.js
+    // Removed duplicate event listeners to avoid conflicts
 }
 
-function handleFileUpload(event) {
+function handleFileUpload(event, type) {
     const file = event.target.files[0];
     if (!file) return;
 
-    updateStatus('Processing file...', 'processing');
+    // Only handle final score processing here
+    if (type !== 'final') return;
+
+    const statusId = 'statusFinal';
+    updateStatus('Processing file...', 'processing', statusId);
 
     const reader = new FileReader();
     reader.onload = function (e) {
@@ -73,56 +89,20 @@ function handleFileUpload(event) {
                 return cleanedRow;
             });
 
-            // Optional: validate headers before processing
+            // Process final score data
             validateInputData(cleanedData);
-
-            // Now process the cleaned data
-            processData(cleanedData);
+            processDataFinal(cleanedData);
 
         } catch (error) {
-            updateStatus('Error reading file: ' + error.message, 'error');
+            updateStatus('Error reading file: ' + error.message, 'error', statusId);
         }
     };
     reader.readAsBinaryString(file);
 }
 
-// function processData(data) {
-//     try {
-//         processedData = data.map(row => {
-//             const processedRow = { ...row };
-
-//             // Calculate sales weighted score
-//             let salesScore = 0;
-//             let opsScore = 0;
-
-//             competencies.forEach((competency, index) => {
-//                 const score = parseFloat(row[competency]) || 0;
-//                 salesScore += (score * salesWeightages[index]) / 100;
-//                 opsScore += (score * opsWeightages[index]) / 100;
-//             });
-
-//             const totalScore = salesScore + opsScore;
-//             const salesPercent = totalScore > 0 ? (salesScore / totalScore) * 100 : 0;
-//             const opsPercent = totalScore > 0 ? (opsScore / totalScore) * 100 : 0;
-
-//             // Round percentages: if .5 or more, round up; if below .5, round down
-//             processedRow['Sales %'] = Math.round(salesPercent);
-//             processedRow['Ops %'] = Math.round(opsPercent);
-//             processedRow['Suitability'] = opsPercent > salesPercent ? 'Operations' : 'Sales';
-
-//             return processedRow;
-//         });
-
-//         updateStatus(`Successfully processed ${processedData.length} records`, 'success');
-//         document.getElementById('downloadBtn').style.display = 'inline-block';
-
-//     } catch (error) {
-//         updateStatus('Error processing data: ' + error.message, 'error');
-//     }
-// }
-function processData(data) {
+function processDataFinal(data) {
     try {
-        processedData = data.map((row, rowIndex) => {
+        processedDataFinal = data.map((row, rowIndex) => {
             const processedRow = { ...row };
 
             // Validate each competency score is between 5 and 20 (inclusive)
@@ -167,18 +147,20 @@ function processData(data) {
             return processedRow;
         });
 
-        updateStatus(`Successfully processed ${processedData.length} records`, 'success');
-        document.getElementById('downloadBtn').style.display = 'inline-block';
+        updateStatus(`Successfully processed ${processedDataFinal.length} records`, 'success', 'statusFinal');
+        document.getElementById('downloadBtnFinal').style.display = 'inline-block';
 
     } catch (error) {
-        updateStatus('Error processing data: ' + error.message, 'error');
+        updateStatus('Error processing data: ' + error.message, 'error', 'statusFinal');
     }
 }
 
+// Removed the conflicting processDataRaw function - it's properly implemented in rawscorescript.js
 
-function updateStatus(message, type) {
-    const status = document.getElementById('status');
-    const resultsSection = document.getElementById('resultsSection');
+function updateStatus(message, type, statusId) {
+    const status = document.getElementById(statusId);
+    const resultsSectionId = statusId === 'statusFinal' ? 'resultsSectionFinal' : 'resultsSectionRaw';
+    const resultsSection = document.getElementById(resultsSectionId);
 
     if (status) {
         status.textContent = message;
@@ -190,9 +172,15 @@ function updateStatus(message, type) {
     }
 }
 
-function downloadProcessedFile() {
+function downloadProcessedFile(type) {
+    // Only handle final score downloads here
+    if (type !== 'final') return;
+    
+    const processedData = processedDataFinal;
+    const statusId = 'statusFinal';
+    
     if (!processedData) {
-        updateStatus('No processed data available', 'error');
+        updateStatus('No processed data available', 'error', statusId);
         return;
     }
 
@@ -207,13 +195,13 @@ function downloadProcessedFile() {
         XLSX.utils.book_append_sheet(wb, ws, 'Processed Data');
 
         // Generate Excel file and trigger download
-        const filename = 'competency_assessment_processed.xlsx';
+        const filename = 'competency_assessment_final_processed.xlsx';
         XLSX.writeFile(wb, filename);
 
-        updateStatus('File downloaded successfully!', 'success');
+        updateStatus('File downloaded successfully!', 'success', statusId);
 
     } catch (error) {
-        updateStatus('Error downloading file: ' + error.message, 'error');
+        updateStatus('Error downloading file: ' + error.message, 'error', statusId);
     }
 }
 
