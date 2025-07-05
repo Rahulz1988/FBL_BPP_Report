@@ -129,16 +129,16 @@ function processDataFinal(data) {
             const salesPercent = totalScore > 0 ? (salesScore / totalScore) * 100 : 0;
             const opsPercent = totalScore > 0 ? (opsScore / totalScore) * 100 : 0;
 
-            // Round percentages
-            const salesRounded = Math.round(salesPercent);
-            const opsRounded = Math.round(opsPercent);
+            // Use two decimal places instead of rounding
+            const salesDecimal = Math.round(salesPercent * 100) / 100;
+            const opsDecimal = Math.round(opsPercent * 100) / 100;
 
-            processedRow['Sales %'] = salesRounded;
-            processedRow['Ops %'] = opsRounded;
+            processedRow['Sales %'] = salesDecimal;
+            processedRow['Ops %'] = opsDecimal;
 
-            if (opsRounded > salesRounded) {
+            if (opsDecimal > salesDecimal) {
                 processedRow['Suitability'] = 'Operations';
-            } else if (salesRounded > opsRounded) {
+            } else if (salesDecimal > opsDecimal) {
                 processedRow['Suitability'] = 'Sales';
             } else {
                 processedRow['Suitability'] = 'Operations/Sales';
